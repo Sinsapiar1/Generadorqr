@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Códigos QR</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Librería externa de generación de QR: qrcode.js -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Códigos QR</h1>
+
+        <div class="input-area">
+            <label for="qr-text">Texto o Enlace:</label>
+            <input type="text" id="qr-text" placeholder="Ingresa el texto o enlace" value="https://generadorqr.com">
+        </div>
+
+        <div class="options-area">
+            <h2>Opciones de Diseño</h2>
+            <div class="option">
+                <label for="color">Color del Código:</label>
+                <input type="color" id="color" value="#000000">
+            </div>
+            <div class="option">
+                <label for="background">Color de Fondo:</label>
+                <input type="color" id="background" value="#ffffff">
+            </div>
+            <div class="option">
+                <label for="size">Tamaño:</label>
+                <input type="number" id="size" value="256" min="64" max="512" step="32">
+            </div>
+        </div>
+
+        <!-- Área para mensajes al usuario (éxito, error, advertencia) -->
+        <div id="message-area" class="message"></div>
+
+        <div class="qr-code-area">
+            <h2>Código QR Generado</h2>
+            <div id="qrcode-container"></div>
+        </div>
+
+        <div class="download-area">
+            <button id="generateBtn">Generar Código QR</button>
+            <button id="downloadBtn" disabled>Descargar Código QR</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
