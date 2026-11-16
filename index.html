@@ -1,65 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Códigos QR</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Librería externa de generación de QR: qrcode.js -->
-    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador QR — crea códigos QR gratis, con tu logo y tus colores</title>
+  <meta name="description" content="Crea códigos QR para enlaces, WiFi, contactos, WhatsApp y más. Elige colores y forma, añade tu logo y descárgalo en PNG o SVG. Gratis, sin registro y sin enviar tus datos a ningún servidor.">
+  <meta name="author" content="Raúl Pivet">
+  <meta name="theme-color" content="#2B44FF">
+  <meta name="color-scheme" content="light dark">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <!-- ESTE ES EL CÓDIGO DE GOOGLE ANALYTICS 4 QUE PROPORCIONASTE -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LE4L9Q65PV"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Generador QR — códigos QR gratis con tu logo y tus colores">
+  <meta property="og:description" content="Enlaces, WiFi, contactos, WhatsApp y más. Descarga en PNG o SVG, sin registro.">
+  <meta property="og:image" content="icons/og.png">
+  <meta name="twitter:card" content="summary_large_image">
 
-      gtag('config', 'G-LE4L9Q65PV');
-    </script>
-    <!-- FIN DEL CÓDIGO DE GOOGLE ANALYTICS -->
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Aplica el tema guardado antes de pintar, para evitar el parpadeo -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('qr-tema');
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LE4L9Q65PV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LE4L9Q65PV');
+  </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Generador de Códigos QR</h1>
+  <a class="skip" href="#editor">Saltar al editor</a>
 
-        <div class="input-area">
-            <label for="qr-text">Texto o Enlace:</label>
-            <input type="text" id="qr-text" placeholder="Ingresa el texto o enlace" value="https://generadorqr.com">
+  <header class="top">
+    <a class="brand" href="./" aria-label="Generador QR, inicio">
+      <svg class="brand-mark" viewBox="0 0 7 7" aria-hidden="true">
+        <path fill-rule="evenodd" d="M1.6 0h3.8A1.6 1.6 0 0 1 7 1.6v3.8A1.6 1.6 0 0 1 5.4 7H1.6A1.6 1.6 0 0 1 0 5.4V1.6A1.6 1.6 0 0 1 1.6 0zM1.7 1a.7.7 0 0 0-.7.7v3.6a.7.7 0 0 0 .7.7h3.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7z"/>
+        <rect x="2" y="2" width="3" height="3" rx=".8"/>
+      </svg>
+      <span>Generador QR</span>
+    </a>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambiar entre tema claro y oscuro">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="i-sun"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3 7 7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="i-moon"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z"/></svg>
+    </button>
+  </header>
+
+  <main class="layout" id="editor">
+    <div class="controls">
+      <div class="intro">
+        <h1>Tu código QR, hecho a tu manera</h1>
+        <p>Elige qué quieres compartir, dale tus colores y descárgalo. Todo se genera en tu dispositivo: nada de lo que escribes sale de aquí.</p>
+      </div>
+
+      <section class="panel" aria-labelledby="h-contenido">
+        <h2 id="h-contenido">Contenido</h2>
+        <div class="types" id="types" role="radiogroup" aria-label="Tipo de contenido"></div>
+        <form id="fields" class="fields" autocomplete="off" novalidate></form>
+      </section>
+
+      <section class="panel" aria-labelledby="h-diseno">
+        <h2 id="h-diseno">Diseño</h2>
+
+        <div class="group">
+          <span class="group-label" id="l-paletas">Paletas</span>
+          <div class="presets" id="presets" role="group" aria-labelledby="l-paletas"></div>
         </div>
 
-        <div class="options-area">
-            <h2>Opciones de Diseño</h2>
-            <div class="option">
-                <label for="color">Color del Código:</label>
-                <input type="color" id="color" value="#000000">
-            </div>
-            <div class="option">
-                <label for="background">Color de Fondo:</label>
-                <input type="color" id="background" value="#ffffff">
-            </div>
-            <div class="option">
-                <label for="size">Tamaño:</label>
-                <input type="number" id="size" value="256" min="64" max="512" step="32">
-            </div>
+        <div class="group colors">
+          <label class="color">
+            <span>Color del código</span>
+            <span class="swatch"><input type="color" id="fg" value="#0f1730"></span>
+          </label>
+          <label class="color" id="fg2Wrap">
+            <span>Segundo color</span>
+            <span class="swatch"><input type="color" id="fg2" value="#2b44ff"></span>
+          </label>
+          <label class="color" id="bgWrap">
+            <span>Fondo</span>
+            <span class="swatch"><input type="color" id="bg" value="#ffffff"></span>
+          </label>
+        </div>
+        <div class="group checks">
+          <label class="check"><input type="checkbox" id="gradient"><span>Degradado entre dos colores</span></label>
+          <label class="check"><input type="checkbox" id="transparent"><span>Fondo transparente</span></label>
+        </div>
+        <p class="hint warn" id="contrastMsg" role="status" hidden></p>
+
+        <div class="group">
+          <span class="group-label" id="l-modulos">Forma de los puntos</span>
+          <div class="segmented" id="moduleStyle" role="radiogroup" aria-labelledby="l-modulos"></div>
+        </div>
+        <div class="group">
+          <span class="group-label" id="l-ojos">Forma de las esquinas</span>
+          <div class="segmented" id="eyeStyle" role="radiogroup" aria-labelledby="l-ojos"></div>
         </div>
 
-        <!-- Área para mensajes al usuario (éxito, error, advertencia) -->
-        <div id="message-area" class="message"></div>
-
-        <div class="qr-code-area">
-            <h2>Código QR Generado</h2>
-            <div id="qrcode-container"></div>
+        <div class="group two">
+          <label class="field">
+            <span>Margen <output id="marginOut">2</output></span>
+            <input type="range" id="margin" min="0" max="6" step="1" value="2">
+          </label>
+          <label class="field">
+            <span>Resistencia a daños</span>
+            <select id="ecl">
+              <option value="L">Baja (código más simple)</option>
+              <option value="M" selected>Media</option>
+              <option value="Q">Alta</option>
+              <option value="H">Máxima (ideal con logo)</option>
+            </select>
+          </label>
         </div>
 
-        <div class="download-area">
-            <button id="generateBtn">Generar Código QR</button>
-            <button id="downloadBtn" disabled>Descargar Código QR</button>
+        <div class="group">
+          <span class="group-label">Logo en el centro</span>
+          <div class="logo-row">
+            <label class="btn ghost file-btn">
+              <input type="file" id="logoFile" accept="image/png,image/jpeg,image/svg+xml,image/webp">
+              <span id="logoLabel">Subir imagen</span>
+            </label>
+            <button class="btn ghost" type="button" id="logoRemove" hidden>Quitar logo</button>
+          </div>
+          <p class="hint">Con logo, la resistencia a daños sube a máxima para que el código siga leyéndose.</p>
         </div>
+
+        <div class="group">
+          <label class="field">
+            <span>Texto debajo del código</span>
+            <input type="text" id="caption" maxlength="40" placeholder="Por ejemplo: Escanéame">
+          </label>
+        </div>
+
+        <button class="btn text" type="button" id="resetDesign">Restablecer diseño</button>
+      </section>
+
+      <section class="panel" aria-labelledby="h-historial">
+        <div class="panel-head">
+          <h2 id="h-historial">Tus últimos códigos</h2>
+          <button class="btn text" type="button" id="clearHistory" hidden>Borrar historial</button>
+        </div>
+        <p class="hint" id="historyEmpty">Aquí aparecerán los códigos que descargues, copies o compartas. Se guardan solo en este navegador.</p>
+        <ul class="history" id="history"></ul>
+      </section>
     </div>
 
-    <script src="script.js"></script>
+    <aside class="stage" aria-label="Vista previa y descarga">
+      <div class="stage-inner">
+        <div class="sticker" id="sticker">
+          <div class="qr" id="qr" role="img" aria-label="Vista previa del código QR"></div>
+          <p class="placeholder" id="placeholder">Escribe tu contenido y el código aparece aquí</p>
+        </div>
+        <p class="meta" id="meta" role="status"></p>
+
+        <div class="actions">
+          <div class="split">
+            <button class="btn primary" type="button" id="dlPng">Descargar PNG</button>
+            <label class="visually-hidden" for="pngSize">Tamaño del PNG</label>
+            <select id="pngSize" class="size-select">
+              <option value="512">512 px</option>
+              <option value="1024" selected>1024 px</option>
+              <option value="2048">2048 px</option>
+              <option value="4096">4096 px</option>
+            </select>
+          </div>
+          <div class="row">
+            <button class="btn onstage" type="button" id="dlSvg">Descargar SVG</button>
+            <button class="btn onstage" type="button" id="copyBtn">Copiar</button>
+            <button class="btn onstage" type="button" id="shareBtn" hidden>Compartir</button>
+          </div>
+        </div>
+        <p class="stage-tip">Antes de imprimir, pruébalo con la cámara de tu móvil.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <p class="credit">Creado por <a href="https://github.com/Sinsapiar1" target="_blank" rel="noopener author"><strong id="creatorName">Raúl Pivet</strong></a></p>
+    <p class="foot-small">© <span id="year">2026</span> Raúl Pivet. Todos los derechos reservados. <a href="https://github.com/Sinsapiar1/Generadorqr" target="_blank" rel="noopener">Código en GitHub</a></p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="qr.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
